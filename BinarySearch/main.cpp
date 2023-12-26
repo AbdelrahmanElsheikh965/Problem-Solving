@@ -2,47 +2,52 @@
 
 using namespace std;
 
-// {2, 3, 4, 6, 7, 9}
+void BS(int arr[], int start, int finish, int target, int found);
 
 int main()
 {
-    int  n = 6;
+    int  n = 6, found = 0;
   //-----------------------------------------{0, 1, 2, 3, 4, 5};
     int target, start, finish, mid, arr[n] = {3, 4, 6, 7, 9, 10};
-    target = 9;
-    int found = 0;
+    target = 7;
 
     start   = 0;
     finish  = n-1;
 
+    BS(arr, start, finish, target, found);
 
-    while(found != 1)
+    return 0;
+}
+
+
+void BS(int arr[], int start, int finish, int target, int found)
+{
+    int mid  = (start + finish) / 2;
+
+    // base case
+    if(found == 1)
     {
-        if(target == arr[n-1])
-        {
-            cout<<"Found! at index : "<<n-1;
-            found = 1;
-        }
-
-        mid  = (start + finish) / 2;
-
-        if(arr[mid] != target)
-        {
-           if(target < arr[mid])
-            {
-                finish  = mid;
-
-            }else if(target > arr[mid])
-            {
-                start  = mid;
-            }
-        }else
-        {
-            cout<<"Found! at index : "<<mid<<endl;
-            found = 1;
-        }
+        cout<<"Found! at index : "<<mid<<endl;
+        return;
     }
 
 
-    return 0;
+    if(arr[mid] != target)
+    {
+       if(target < arr[mid])
+        {
+            finish  = mid-1;
+            BS(arr, start, finish, target, found);
+
+        }else if(target > arr[mid])
+        {
+            start  = mid+1;
+            BS(arr, start, finish, target, found);
+        }
+    }else
+        {
+            found = 1;
+            BS(arr, start, finish, target, found);
+        }
+
 }
