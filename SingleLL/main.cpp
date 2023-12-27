@@ -35,11 +35,11 @@ class SingleLL
         vector<Node> vRow;
         Node* head;
 
-        LinkedList(){
+        SingleLL(){
             head = nullptr;
         }
 
-        LinkedList(SingleLL& nodeList){
+        SingleLL(SingleLL& nodeList){
             vRow = nodeList.vRow;
             head = nodeList.head;
         }
@@ -55,28 +55,50 @@ class SingleLL
                 vRow[vRow.size()-2].next = &vRow[vRow.size()-1];
         }
 
-        int deleteNode(int num)
+        void deleteNode(int num)
         {
-            return search_inVRow(num);
-//            vRow[i-1].next = &vRow[i+1];
+            int i = search_inVRow(num);
+            auto it = vRow.begin() + i;
+            vRow.erase(it);
+            vRow[i].next = &vRow[i+1];
         }
 
         void clearList()
         {
-            for(auto i : vRow)
-                vRow.clear();
-            // we can also make every next pointer points to null.
+            head = nullptr;
+            for (int i = 0; i < vRow.size(); i++)
+            {
+                vRow[i].next = nullptr;
+            }
         }
 
-        void InsertAfter(int pos, int data)
+        void InsertAfter(int pos, Node n)
         {
             if(pos >= 0 && pos <= vRow.size())
             {
                 /* Make an iterator pointing to position & auto for detecting the correct data type in the run time.*/
                 auto it = vRow.begin() + pos;
-                Node n;
-                n.data = data;
                 vRow.insert(it, n);
+
+                int headFlag = 0;
+                for (int i = 0; i < vRow.size()-1; i++)
+                {
+                    if(head != nullptr  || vRow[0].next != nullptr )
+                    {
+                        if(headFlag == 0)
+                        {
+                            head = &vRow[0];
+                            i = -1;
+                            headFlag = 1;
+                            continue;
+                        }
+                        vRow[i].next = &vRow[i+1];
+                    }else
+                    {
+                        cout<< "No data";
+                        break;
+                    }
+                }
             }else{
                 cout<<"invalid operation for an empty vector";
             }
@@ -100,8 +122,26 @@ class SingleLL
         }
 
         void display(){
-            for (int i = 0; i < vRow.size(); i++)
-                cout << vRow[i].data << " ";
+            // Print head + nodes according to their addresses.
+            int headFlag = 0;
+            for (int i = 0; i < vRow.size()-1; i++)
+            {
+                if(head != nullptr  || vRow[0].next != nullptr )
+                {
+                    if(headFlag == 0)
+                    {
+                        cout<<this->head->data<<" ";
+                        i = -1;
+                        headFlag = 1;
+                        continue;
+                    }
+                    cout << vRow[i].next->data << " ";
+                }else
+                {
+                    cout<< "No data";
+                    break;
+                }
+            }
         }
 };
 
@@ -121,16 +161,16 @@ int main()
     n3.data = 4;
     s1.add(n3);
 
+    Node n5;
+    n5.data = 8;
 
-    cout<< s1.head->data<<endl;
-//    s1.display();
-    for (int i = 0; i < s1.vRow.size(); i++)
-            cout << s1.vRow[i].data << " ";
+    Node n4;
+    n4.data = 5;
+    s1.add(n4);
 
-//    cout << "\n69 is found at index: "<<s1.search_inVRow(69);
-//    s1.InsertAfter(0, 6);
-//    Node n = *s1.head;
-//    cout<<"Head data : "<< n.data;
+    s1.InsertAfter(3, n5);
+
+    s1.display();
 
     /* cin.get(); */
     return 0;
