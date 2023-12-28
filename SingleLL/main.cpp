@@ -15,7 +15,7 @@ class Node
 {
     public:
         int  data;
-        Node* next;
+        Node*  next;
 
         Node(){
             data = 0;
@@ -30,148 +30,132 @@ class Node
 
 class SingleLL
 {
-
     public:
-        vector<Node> vRow;
         Node* head;
+        int vSize;
 
         SingleLL(){
             head = nullptr;
+            vSize = 0;
         }
 
-        SingleLL(SingleLL& nodeList){
-            vRow = nodeList.vRow;
-            head = nodeList.head;
-        }
+//        SingleLL(SingleLL& nodeList){
+//            vRow = nodeList.vRow;
+//            head = nodeList.head;
+//        }
 
-        void add(Node n){
-            vRow.push_back(n);
-
-            if (vRow.size() == 1)
-                cout<<"";   // Not to give unexpected result
-                head = &vRow[0];
-
-            if(vRow.size() > 1)
-                vRow[vRow.size()-2].next = &vRow[vRow.size()-1];
+        void add(Node n)
+        {
+            Node * last = new Node;
+            last = head;
+            if(head == nullptr) // means list is empty
+            {
+                head = &n;
+                vSize++;
+            }else if(vSize == 1)
+            {
+                head->next = &n;
+                vSize++;
+            }else
+            {
+                while(last->next != nullptr)
+                {
+                    last = last->next;
+                }
+                last->next = &n;
+                vSize++;
+            }
         }
 
         void deleteNode(int num)
         {
-            int i = search_inVRow(num);
-            auto it = vRow.begin() + i;
-            vRow.erase(it);
-            vRow[i].next = &vRow[i+1];
+           //
         }
 
         void clearList()
         {
-            head = nullptr;
-            for (int i = 0; i < vRow.size(); i++)
-            {
-                vRow[i].next = nullptr;
-            }
+           // make every node points to null - search
         }
 
-        void InsertAfter(int pos, Node n)
+
+        string isEmpty()
         {
-            if(pos >= 0 && pos <= vRow.size())
-            {
-                /* Make an iterator pointing to position & auto for detecting the correct data type in the run time.*/
-                auto it = vRow.begin() + pos;
-                vRow.insert(it, n);
-
-                int headFlag = 0;
-                for (int i = 0; i < vRow.size()-1; i++)
-                {
-                    if(head != nullptr  || vRow[0].next != nullptr )
-                    {
-                        if(headFlag == 0)
-                        {
-                            head = &vRow[0];
-                            i = -1;
-                            headFlag = 1;
-                            continue;
-                        }
-                        vRow[i].next = &vRow[i+1];
-                    }else
-                    {
-                        cout<< "No data";
-                        break;
-                    }
-                }
-            }else{
-                cout<<"invalid operation for an empty vector";
-            }
+            return (vSize > 0) ? "Not Empty" : "Empty";
         }
 
-        bool isEmpty()
+//        Node searchIn(int number)
+//        {
+//            Node* last = new Node;
+//            last = head;
+//            while(last->next != nullptr)
+//            {
+//                if(last->data == number)
+//                {
+//                    return *last;
+//                }else
+//                {
+//                    last = last->next;
+//                }
+//            }
+//        }
+
+        // 4 5   6 8 9
+        // 4 5 2 6 8 9
+//        void InsertAfter(int posValue, Node newNode)
+//        {
+//            Node oldNode = searchIn(posValue);
+//            Node * temp    = oldNode.next;
+//            oldNode.next = &newNode;
+//            newNode.next = temp;
+//        }
+
+        // takes function pointer as a parameter to perform callback()
+        void display( void (*loop)(Node* HeadPtr) )
         {
-            if(vRow.size() == 0)
-            {
-                return 0;   // Empty
-            }
-            return 1;   // Not Empty
+            loop(head);
         }
 
-        int search_inVRow(int number){
-            for (int i = 0; i < vRow.size(); i++)
-            {
-                if(number == vRow[i].data)
-                    return i;
-            }
-        }
-
-        void display(){
-            // Print head + nodes according to their addresses.
-            int headFlag = 0;
-            for (int i = 0; i < vRow.size()-1; i++)
-            {
-                if(head != nullptr  || vRow[0].next != nullptr )
-                {
-                    if(headFlag == 0)
-                    {
-                        cout<<this->head->data<<" ";
-                        i = -1;
-                        headFlag = 1;
-                        continue;
-                    }
-                    cout << vRow[i].next->data << " ";
-                }else
-                {
-                    cout<< "No data";
-                    break;
-                }
-            }
-        }
+//        friend void loop() {};
 };
+
+// Try to let this function take callback() function as a parameter and run instead of 2 cout.
+void loop(Node* HeadPtr)
+{
+    Node * currNode = new Node;
+    currNode = HeadPtr;
+
+    while(currNode->next != nullptr)
+    {
+        cout<<currNode->data;
+        currNode = currNode->next;
+    }
+    cout<<currNode->data;
+}
+
 
 int main()
 {
     SingleLL s1;
 
-    Node n1;
-    n1.data = 9;
-    s1.add(n1);
+    Node test;
+    Node* n1 = &test;   // = new Node;
+    n1->data = 9;
+    s1.add(*n1);
 
-    Node n2;
-    n2.data = 6;
-    s1.add(n2);
+    Node* n2 = new Node;
+    n2->data = 6;
+    s1.add(*n2);
 
-    Node n3;
-    n3.data = 4;
-    s1.add(n3);
+    Node* n3 = new Node;
+    n3->data = 8;
+    s1.add(*n3);
 
-    Node n5;
-    n5.data = 8;
+    s1.display(loop);
+//    cout<<s1.searchIn().data;
 
-    Node n4;
-    n4.data = 5;
-    s1.add(n4);
-
-    s1.InsertAfter(3, n5);
-
-    s1.display();
-
-    /* cin.get(); */
     return 0;
 }
+
+
+
+
