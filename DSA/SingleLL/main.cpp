@@ -2,13 +2,6 @@
 
 using namespace std;
 
-/*
-    Constructor       Copy Constructor
-    Add (at the end)  Display       ClearList
-    IsEmpty           Search        Delete
-    InsertAfter       Bubble sort (optional)
-*/
-
 class Node
 {
     public:
@@ -22,7 +15,7 @@ class Node
 
         ~Node()
         {
-            //
+            // Destructor is very important to make sure every node object is deleted
         }
 };
 
@@ -37,9 +30,10 @@ class SingleLL
             vSize = 0;
         }
 
-//        SingleLL(SingleLL& nodeList){
-//            head = nodeList.head;
-//        }
+        SingleLL(const SingleLL& singleNodeList){
+            this->head  = singleNodeList.head;
+            this->vSize = singleNodeList.vSize;
+        }
 
         void add(Node n)
         {
@@ -97,6 +91,7 @@ class SingleLL
 
             oldNode->next = newNode;
             newNode->next = temp;
+            vSize++;
         }
 
 
@@ -112,24 +107,34 @@ class SingleLL
                 if(nodeIterator->data == head->data && num == head->data)
                 {
                     head = nodeIterator->next;
+                    vSize--;
                     return;
                 }
                 else if(nodeIterator->next->data == num)
                 {
                     // Handling if the target was in the middle of the list.
                       nodeIterator->next = nodeIterator->next->next;
+                      vSize--;
                       return;
                 }
                 else if(nodeIterator->next->data == num && nodeIterator->next->next == nullptr )
                 {
                     // Handling if the target was at the end of the list.
                     nodeIterator->next = nullptr;
+                    vSize--;
                     return;
                 }
                 nodeIterator = nodeIterator->next;
             }
+
         }
 
+        void clearList()
+        {
+            head = nullptr;
+        }
+
+        void bubbleSort();
 
         /* takes function pointer as a parameter to perform callback() */
         void display( void (*loop)(Node* HeadPtr) )
@@ -139,18 +144,25 @@ class SingleLL
 
 };
 
+
 // Try to let this function take callback() function as a parameter and run instead of 2 cout.
 void loop(Node* HeadPtr)
 {
     Node * currNode = new Node;
     currNode = HeadPtr;
 
-    while(currNode->next != nullptr)
+    if(currNode != nullptr)
     {
+        while(currNode->next != nullptr)
+        {
+            cout<<currNode->data;
+            currNode = currNode->next;
+        }
         cout<<currNode->data;
-        currNode = currNode->next;
+    }else
+    {
+        cout << "No nodes in the list";
     }
-    cout<<currNode->data;
 }
 
 
@@ -171,19 +183,73 @@ int main()
     n3->data = 8;
     s1.add(*n3);
 
+    cout <<"---------------------Before Insert"<<endl;
+    s1.display(loop);
 
+    cout <<endl<<"---------------------After Insert"<<endl;
     Node* n4 = new Node;
     n4->data = 3;
     s1.InsertAfter(6, n4);
-
-    cout<<s1.searchIn(6)->next->data<<endl;
-
-    s1.deleteNode(8);
     s1.display(loop);
+
+    cout <<endl<<"---------------------After Cloning s1 SLL object"<<endl;
+    SingleLL& s2 = s1;
+    s2.display(loop);
+
+    cout <<endl<<"---------------------After Clearing s3 list"<<endl;
+//    s1.clearList();
+//    s1.display(loop);
+
+    cout <<endl<<"---------------------After Bubble sort of s4"<<endl;
+    s1.bubbleSort();
+    s1.display(loop);
+
+    cout <<endl<<"---------------------After Searching for Node(6)"<<endl;
+    cout<<s1.searchIn(6)->data;
+
+    cout <<endl<<"---------------------After Deleting Node(9)"<<endl;
+    s1.deleteNode(9);
+    s1.display(loop);
+
+    cout <<endl<<"---------------------Size"<<endl;
+    cout<<"Size : "<<s1.vSize<<endl;
 
     return 0;
 }
 
 
+void SingleLL::bubbleSort()
+{
+    Node * currNode = new Node;
+    currNode = head;
+    int temp;
 
+    if(currNode != nullptr)
+    {
+        int flag = 1;
 
+        while(currNode->next != nullptr)
+        {
+            if(currNode->data > currNode->next->data)
+            {
+                temp                    = currNode->data;
+                currNode->data          = currNode->next->data;
+                currNode->next->data    = temp;
+                flag++;
+                currNode = currNode->next;
+            }else
+            {
+                currNode = currNode->next;
+            }
+        }
+
+        if(flag == 1)
+            return;
+        else
+            bubbleSort();
+
+    }else
+    {
+        cout << "No Nodes To Sort";
+    }
+}
