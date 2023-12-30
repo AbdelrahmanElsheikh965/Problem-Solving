@@ -30,6 +30,7 @@ class SingleLL
             vSize = 0;
         }
 
+        // Shallow Copy - auto-written by compiler
         SingleLL(const SingleLL& singleNodeList){
             this->head  = singleNodeList.head;
             this->vSize = singleNodeList.vSize;
